@@ -1,0 +1,13 @@
+GIT COMANDOS
+
+git clone https://github.com/MiguelCaG/RepoM2.git
+
+git status
+
+git add
+
+git commit -m "Subida Inicial de Proyecto FlappyBird"
+
+git push
+
+git pull
