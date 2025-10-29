@@ -1,18 +1,32 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private int score = 0;
+    public TextMeshProUGUI scoreText;
+
     void Start()
     {
-        
+        BirdController.Score += UpdateScore;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+
+    }
+
+    private void UpdateScore()
+    {
+        score++;
+        scoreText.text = score.ToString();
+    }
+
+    private void OnDisable()
+    {
+        BirdController.Score -= UpdateScore;
     }
 }

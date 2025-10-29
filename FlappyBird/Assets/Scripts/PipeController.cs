@@ -13,7 +13,7 @@ public class PipeController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    void Update()
+    private void FixedUpdate()
     {
         rb.velocity = new Vector3(speed, 0f, 0f);
     }
