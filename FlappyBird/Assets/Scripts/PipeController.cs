@@ -6,7 +6,7 @@ public class PipeController : MonoBehaviour
 {
     private Rigidbody rb;
 
-    private float speed = -5f;
+    [HideInInspector] public float speed = -5f;
 
     void Start()
     {

@@ -6,14 +6,18 @@ using UnityEngine;
 public class BirdController : MonoBehaviour
 {
     public static event Action Score;
+    public static event Action Die;
 
     private Rigidbody rb;
 
     private float jumpSpeed = 5f;
 
+    private Animator birdAnim;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        birdAnim = GetComponent<Animator>();
     }
 
     void Update()
@@ -22,6 +26,11 @@ public class BirdController : MonoBehaviour
         {
             rb.velocity = Vector3.zero;
             rb.AddForce(Vector3.up * jumpSpeed, ForceMode.VelocityChange);
+
+            if (!birdAnim.GetCurrentAnimatorStateInfo(0).Equals("Flying"))
+            {
+                birdAnim.SetTrigger("Fly");
+            }
         }
     }
 
@@ -29,7 +38,7 @@ public class BirdController : MonoBehaviour
     {
         if(collision.gameObject.layer == LayerMask.NameToLayer("Pipe"))
         {
-            Time.timeScale = 0f;
+            Die.Invoke();
         }
     }
 
