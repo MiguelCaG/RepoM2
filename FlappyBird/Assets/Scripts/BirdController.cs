@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class BirdController : MonoBehaviour
 {
-    public static event Action Score;
-    public static event Action Die;
+    public static event Action Score;   // CAMBIAR AL GESTOR DE EVENTOS EN GAMEMANAGER QUE TIENE SINGLETON
+    public static event Action Die;     // CAMBIAR AL GESTOR DE EVENTOS EN GAMEMANAGER QUE TIENE SINGLETON
 
     private Rigidbody rb;
 

@@ -1,47 +1,48 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject mainMenuPanel;
-    public GameObject retryPanel;
-
-    void Start()
+    public static GameManager instance = null;
+    void Awake()
     {
-        Time.timeScale = 1.0f;
-
-        BirdController.Die += EnableRetryPanel;
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+            Destroy(gameObject);
+        DontDestroyOnLoad(gameObject);
     }
 
-    public void StartGame()
+    private static string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop) + "/save.dat";
+
+    public static void SaveHighScore(int highScore)
     {
-        SceneManager.LoadScene("GameScene");
-    }
-    public void QuitGame()
-    {
-        Application.Quit();
+        BinaryFormatter formatter = new BinaryFormatter();
+        FileStream stream = new FileStream(path, FileMode.Create);
+
+        formatter.Serialize(stream, highScore);
+        stream.Close();
     }
 
-    private void EnableRetryPanel()
+    public static int LoadHighScore()
     {
-        Time.timeScale = 0.0f;
-        retryPanel.SetActive(true);
-    }
+        if (File.Exists(path))
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream stream = new FileStream(path, FileMode.Open);
 
-    public void RetryButton()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
+            int highScore = (int)formatter.Deserialize(stream);
+            stream.Close();
 
-    public void ReturnButton()
-    {
-        SceneManager.LoadScene("MainMenu");
-    }
-
-    private void OnDisable()
-    {
-        BirdController.Die -= EnableRetryPanel;
+            return highScore;
+        }
+        else
+        {
+            return 0;
+        }
     }
 }

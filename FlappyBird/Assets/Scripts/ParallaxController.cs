@@ -14,7 +14,7 @@ public class ParallaxController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
-        initialPosition = new Vector3(21.8f, transform.position.y, transform.position.z);
+        initialPosition = new Vector3(21.6f, transform.position.y, transform.position.z);
     }
 
     private void Update()
