@@ -1,12 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    private static string path;
+
     public static GameManager instance = null;
     void Awake()
     {
@@ -15,17 +15,23 @@ public class GameManager : MonoBehaviour
         else if (instance != this)
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
-    }
 
-    private static string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop) + "/save.dat";
+        path = Application.persistentDataPath + "/save.dat";
+        Debug.Log("Ruta de guardado: " + path);
+    }
 
     public static void SaveHighScore(int highScore)
     {
+        PlayerData playerData = new PlayerData();
+        playerData.highScore = highScore;
+
         BinaryFormatter formatter = new BinaryFormatter();
         FileStream stream = new FileStream(path, FileMode.Create);
 
-        formatter.Serialize(stream, highScore);
+        formatter.Serialize(stream, playerData);
         stream.Close();
+
+        Debug.Log($"Highscore guardado correctamente: {highScore}");
     }
 
     public static int LoadHighScore()
@@ -35,14 +41,21 @@ public class GameManager : MonoBehaviour
             BinaryFormatter formatter = new BinaryFormatter();
             FileStream stream = new FileStream(path, FileMode.Open);
 
-            int highScore = (int)formatter.Deserialize(stream);
+            PlayerData playerData = (PlayerData)formatter.Deserialize(stream);
             stream.Close();
-
-            return highScore;
+            Debug.Log($"Highscore cargado: {playerData.highScore}");
+            return playerData.highScore;
         }
         else
         {
+            Debug.Log("No hay datos");
             return 0;
         }
+    }
+
+    [System.Serializable]
+    public class PlayerData
+    {
+        public int highScore;
     }
 }

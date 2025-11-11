@@ -24,7 +24,7 @@ public class UIController : MonoBehaviour
         Time.timeScale = 1.0f;
 
         highScore = GameManager.LoadHighScore();
-        highScoreText.text = "Highscore: " + highScore.ToString();
+        highScoreText.text = "High Score: " + highScore.ToString();
 
         BirdController.Score += UpdateScore;
         BirdController.Die += EnableRetryPanel;
@@ -54,7 +54,7 @@ public class UIController : MonoBehaviour
             GameManager.SaveHighScore(highScore);
         }
 
-        highScoreText.text = "Highscore: " + highScore.ToString();
+        highScoreText.text = "High Score: " + highScore.ToString();
     }
 
     public void StartGame() => SceneManager.LoadScene("GameScene");
