@@ -5,7 +5,11 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private static string path;
+    public enum State { Ready, Playing, GameOver }
+
+    public State actualState = State.Ready;
+
+    private string path;
 
     public static GameManager instance = null;
     void Awake()
@@ -20,7 +24,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Ruta de guardado: " + path);
     }
 
-    public static void SaveHighScore(int highScore)
+    public void SaveHighScore(int highScore)
     {
         PlayerData playerData = new PlayerData();
         playerData.highScore = highScore;
@@ -34,7 +38,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Highscore guardado correctamente: {highScore}");
     }
 
-    public static int LoadHighScore()
+    public int LoadHighScore()
     {
         if (File.Exists(path))
         {

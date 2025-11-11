@@ -14,15 +14,26 @@ public class BirdController : MonoBehaviour
 
     private Animator birdAnim;
 
+    private AudioSource birdAudio;
+    public AudioClip jumpAudio;
+    public AudioClip collisionAudio;
+
+    private GameManager gameManager;
+
     void Start()
     {
+        
         rb = GetComponent<Rigidbody>();
         birdAnim = GetComponent<Animator>();
+        birdAudio = GetComponent<AudioSource>();
+
+        gameManager = GameManager.instance;
+        gameManager.actualState = GameManager.State.Playing;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0))
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0)) && gameManager.actualState == GameManager.State.Playing)
         {
             rb.velocity = Vector3.zero;
             rb.AddForce(Vector3.up * jumpSpeed, ForceMode.VelocityChange);
@@ -31,6 +42,9 @@ public class BirdController : MonoBehaviour
             {
                 birdAnim.SetTrigger("Fly");
             }
+
+            birdAudio.clip = jumpAudio;
+            birdAudio.Play();
         }
     }
 
@@ -38,8 +52,21 @@ public class BirdController : MonoBehaviour
     {
         if(collision.gameObject.layer == LayerMask.NameToLayer("Pipe"))
         {
-            Die.Invoke();
+            gameManager.actualState = GameManager.State.GameOver;
+            birdAudio.clip = collisionAudio;
+            birdAudio.Play();
+
+            StartCoroutine("Fall");
         }
+    }
+
+    private IEnumerator Fall()
+    {
+        gameObject.GetComponent<SphereCollider>().enabled = false;
+
+        yield return new WaitForSeconds(3.0f);
+
+        Die.Invoke();
     }
 
     private void OnTriggerEnter(Collider other)
