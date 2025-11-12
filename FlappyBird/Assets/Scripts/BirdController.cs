@@ -1,16 +1,15 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BirdController : MonoBehaviour
 {
-    public static event Action Score;   // CAMBIAR AL GESTOR DE EVENTOS EN GAMEMANAGER QUE TIENE SINGLETON
-    public static event Action Die;     // CAMBIAR AL GESTOR DE EVENTOS EN GAMEMANAGER QUE TIENE SINGLETON
-
     private Rigidbody rb;
 
     private float jumpSpeed = 5f;
+    private float maxRotationUp = 30f;
+    private float maxRotationDown = -40f;
+    private float rotationLerpSpeed = 5f;
+    private float targetRotation = 0f;
 
     private Animator birdAnim;
 
@@ -22,7 +21,7 @@ public class BirdController : MonoBehaviour
 
     void Start()
     {
-        
+
         rb = GetComponent<Rigidbody>();
         birdAnim = GetComponent<Animator>();
         birdAudio = GetComponent<AudioSource>();
@@ -38,19 +37,24 @@ public class BirdController : MonoBehaviour
             rb.velocity = Vector3.zero;
             rb.AddForce(Vector3.up * jumpSpeed, ForceMode.VelocityChange);
 
-            if (!birdAnim.GetCurrentAnimatorStateInfo(0).Equals("Flying"))
-            {
-                birdAnim.SetTrigger("Fly");
-            }
+            targetRotation = maxRotationUp;
+
+            birdAnim.SetTrigger("Fly");
 
             birdAudio.clip = jumpAudio;
             birdAudio.Play();
         }
+
+        if (rb.velocity.y < 0)
+            targetRotation = maxRotationDown;
+
+        float newZRotation = Mathf.LerpAngle(transform.eulerAngles.z, targetRotation, rotationLerpSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.Euler(0, 0, newZRotation);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.layer == LayerMask.NameToLayer("Pipe"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Pipe"))
         {
             gameManager.actualState = GameManager.State.GameOver;
             birdAudio.clip = collisionAudio;
@@ -66,14 +70,14 @@ public class BirdController : MonoBehaviour
 
         yield return new WaitForSeconds(3.0f);
 
-        Die.Invoke();
+        gameManager.OnDie();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.layer == LayerMask.NameToLayer("Score"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("Score"))
         {
-            Score.Invoke();
+            gameManager.OnScore();
         }
     }
 }

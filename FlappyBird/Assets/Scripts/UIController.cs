@@ -1,10 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
@@ -25,11 +22,16 @@ public class UIController : MonoBehaviour
     private GameManager gameManager;
     private AudioManager audioManager;
 
+    public ParticleSystem[] particles;
+
 
     void Start()
     {
         gameManager = GameManager.instance;
         audioManager = AudioManager.instance;
+
+        optionsPanel.transform.GetChild(3).GetComponent<Slider>().value = audioManager.GetMusicVolume();
+        optionsPanel.transform.GetChild(4).GetComponent<Slider>().value = audioManager.GetSFXVolume();
 
         Time.timeScale = 1.0f;
 
@@ -41,8 +43,8 @@ public class UIController : MonoBehaviour
             inGameHighScoreText.text = "High Score: " + highScore.ToString();
         }
 
-        BirdController.Score += UpdateScore;
-        BirdController.Die += EnableRetryPanel;
+        gameManager.Score += UpdateScore;
+        gameManager.Die += EnableRetryPanel;
     }
 
     private void Update()
@@ -62,7 +64,6 @@ public class UIController : MonoBehaviour
                 optionsPanel.SetActive(false);
                 Time.timeScale = time;
             }
-
         }
     }
 
@@ -73,7 +74,12 @@ public class UIController : MonoBehaviour
 
         if (score > highScore)
         {
-            inGameScoreText.color = inGameHighScoreText.color;
+            if(inGameScoreText.color != inGameHighScoreText.color)
+            {
+                particles[0].Play();
+                particles[1].Play();
+                inGameScoreText.color = inGameHighScoreText.color;
+            }
             inGameHighScoreText.text = "High Score: " + score.ToString();
         }
     }
@@ -111,8 +117,8 @@ public class UIController : MonoBehaviour
 
     private void OnDisable()
     {
-        BirdController.Score -= UpdateScore;
-        BirdController.Die -= EnableRetryPanel;
+        gameManager.Score -= UpdateScore;
+        gameManager.Die -= EnableRetryPanel;
     }
 
 }

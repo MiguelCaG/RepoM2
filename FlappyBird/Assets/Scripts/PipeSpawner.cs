@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,18 +12,17 @@ public class PipeSpawner : MonoBehaviour
 
     void Start()
     {
-        BirdController.Score += SpawnPipe;
+        GameManager.instance.Score += SpawnPipe;
 
         for (int i = 0; i < maxPipes; i++)
         {
             GameObject newPipe = Instantiate(pipePrefab, Vector3.right * (10 + 8 * i), Quaternion.identity);
+            Vector3 upperPipePos = newPipe.transform.GetChild(0).gameObject.transform.position;
+            Vector3 lowerPipePos = newPipe.transform.GetChild(1).gameObject.transform.position;
+            newPipe.transform.GetChild(0).gameObject.transform.position = new Vector3(upperPipePos.x, Random.Range(6f, 8f), upperPipePos.z);
+            newPipe.transform.GetChild(1).gameObject.transform.position = new Vector3(lowerPipePos.x, Random.Range(-6f, -8f), lowerPipePos.z);
             pipesPool.Add(newPipe);
         }
-    }
-
-    void Update()
-    {
-
     }
 
     private void SpawnPipe()
@@ -54,6 +52,6 @@ public class PipeSpawner : MonoBehaviour
 
     private void OnDisable()
     {
-        BirdController.Score -= SpawnPipe;
+        GameManager.instance.Score -= SpawnPipe;
     }
 }

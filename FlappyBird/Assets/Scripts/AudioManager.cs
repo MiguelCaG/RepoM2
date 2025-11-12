@@ -20,8 +20,20 @@ public class AudioManager : MonoBehaviour
         audioMixer.SetFloat("musicVol", volume);
     }
 
+    public float GetMusicVolume()
+    {
+        audioMixer.GetFloat("musicVol", out float vol);
+        return vol;
+    }
+
     public void SetSFXVolume(float volume)
     {
         audioMixer.SetFloat("sfxVol", volume);
+    }
+
+    public float GetSFXVolume()
+    {
+        audioMixer.GetFloat("sfxVol", out float vol);
+        return vol;
     }
 }

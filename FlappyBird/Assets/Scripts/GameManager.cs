@@ -1,4 +1,4 @@
-
+using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     public State actualState = State.Ready;
 
     private string path;
+
+    public event Action Score;
+    public event Action Die;
 
     public static GameManager instance = null;
     void Awake()
@@ -23,6 +26,9 @@ public class GameManager : MonoBehaviour
         path = Application.persistentDataPath + "/save.dat";
         Debug.Log("Ruta de guardado: " + path);
     }
+
+    public void OnScore() => Score?.Invoke();
+    public void OnDie() => Die?.Invoke();
 
     public void SaveHighScore(int highScore)
     {
