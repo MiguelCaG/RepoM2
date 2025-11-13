@@ -131,10 +131,9 @@ public class BaseEnemyFSM : MonoBehaviour
     }
     void BodySeek()
     {
-        if (!agent_.transform.position.Equals(goals[goal % goals.Length].transform.position))
+        if(!EqualsIgnoreY())
         {
             agent_.SetDestination(goals[goal % goals.Length].transform.position);
-            Debug.Log("ENTRA");
         }
         else
             goal++;
@@ -158,11 +157,18 @@ public class BaseEnemyFSM : MonoBehaviour
 
     }
 
-    IEnumerator Waiting()
+    private IEnumerator Waiting()
     {
         yield return new WaitForSeconds(stun_time_);
 
+        agent_.isStopped = false;
+
         current_mind_state_ = MindStates.kSeek;
+    }
+
+    private bool EqualsIgnoreY()
+    {
+        return agent_.transform.position.x == goals[goal % goals.Length].transform.position.x && agent_.transform.position.z == goals[goal % goals.Length].transform.position.z;
     }
 
     private void OnDrawGizmos()
