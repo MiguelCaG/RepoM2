@@ -18,10 +18,13 @@ public class PlayerController : MonoBehaviour
     private Vector2 inputData;
 
     private bool isJumping = false;
+    private bool isRunning = false;
 
     public Transform cameraTransform;
 
     public float charaterRotationSpeed = 10.0f;
+
+    public Animator playerAnim;
 
     private void Awake()
     {
@@ -47,6 +50,16 @@ public class PlayerController : MonoBehaviour
         mIM.PlayerWorld.Jump.canceled += Jump_canceled =>
         {
             isJumping = Jump_canceled.ReadValueAsButton();
+        };
+
+        mIM.PlayerWorld.Run.performed += Run_performed =>
+        {
+            isRunning = Run_performed.ReadValueAsButton();
+        };
+
+        mIM.PlayerWorld.Run.canceled += Run_canceled =>
+        {
+            isRunning = Run_canceled.ReadValueAsButton();
         };
     }
 
@@ -92,9 +105,29 @@ public class PlayerController : MonoBehaviour
 
         if (move.sqrMagnitude > 0.0001f)
         {
+            playerAnim.SetBool("IsWalking", true);
             Quaternion targetRotation = Quaternion.LookRotation(move, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation,
-            targetRotation, Time.deltaTime * charaterRotationSpeed);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * charaterRotationSpeed);
+
+            if (isRunning)
+            {
+                playerAnim.SetBool("IsRunning", true);
+                playerSpeed = 4f;
+            }
+            else
+            {
+                playerSpeed = 2f;
+                playerAnim.SetBool("IsRunning", false);
+            }
+        }
+        else
+        {
+            playerAnim.SetBool("IsWalking", false);
+            if (playerAnim.GetBool("IsRunning"))
+            {
+                playerSpeed = 2f;
+                playerAnim.SetBool("IsRunning", false);
+            }
         }
 
         if (isJumping && groundPlayer)

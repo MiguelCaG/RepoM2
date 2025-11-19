@@ -137,6 +137,15 @@ public partial class @MyInputMap: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Run"",
+                    ""type"": ""Button"",
+                    ""id"": ""3e81d022-8865-46ae-9cf0-3a0b4e75018e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -315,6 +324,72 @@ public partial class @MyInputMap: IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Shift"",
+                    ""id"": ""092fd1ad-a790-4d33-9000-a7c32b49484d"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Run"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""2cf550b1-1d6a-4e90-bb96-54bec58037f0"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Run"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""68e8a8c4-8e9e-427d-bc95-83e25e05d567"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Run"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""R2"",
+                    ""id"": ""9769ebc3-9979-4ece-a953-f42443bb33c7"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Run"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""9c07e453-b7f1-484a-925c-6426ae01c491"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Run"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""fe00d54f-9655-4bbf-b991-57c8d5b4dc1f"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Run"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -328,6 +403,7 @@ public partial class @MyInputMap: IInputActionCollection2, IDisposable
         m_PlayerWorld = asset.FindActionMap("PlayerWorld", throwIfNotFound: true);
         m_PlayerWorld_Movement = m_PlayerWorld.FindAction("Movement", throwIfNotFound: true);
         m_PlayerWorld_Jump = m_PlayerWorld.FindAction("Jump", throwIfNotFound: true);
+        m_PlayerWorld_Run = m_PlayerWorld.FindAction("Run", throwIfNotFound: true);
     }
 
     ~@MyInputMap()
@@ -507,6 +583,7 @@ public partial class @MyInputMap: IInputActionCollection2, IDisposable
     private List<IPlayerWorldActions> m_PlayerWorldActionsCallbackInterfaces = new List<IPlayerWorldActions>();
     private readonly InputAction m_PlayerWorld_Movement;
     private readonly InputAction m_PlayerWorld_Jump;
+    private readonly InputAction m_PlayerWorld_Run;
     /// <summary>
     /// Provides access to input actions defined in input action map "PlayerWorld".
     /// </summary>
@@ -526,6 +603,10 @@ public partial class @MyInputMap: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "PlayerWorld/Jump".
         /// </summary>
         public InputAction @Jump => m_Wrapper.m_PlayerWorld_Jump;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerWorld/Run".
+        /// </summary>
+        public InputAction @Run => m_Wrapper.m_PlayerWorld_Run;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -558,6 +639,9 @@ public partial class @MyInputMap: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @Run.started += instance.OnRun;
+            @Run.performed += instance.OnRun;
+            @Run.canceled += instance.OnRun;
         }
 
         /// <summary>
@@ -575,6 +659,9 @@ public partial class @MyInputMap: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @Run.started -= instance.OnRun;
+            @Run.performed -= instance.OnRun;
+            @Run.canceled -= instance.OnRun;
         }
 
         /// <summary>
@@ -644,5 +731,12 @@ public partial class @MyInputMap: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnJump(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Run" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRun(InputAction.CallbackContext context);
     }
 }
